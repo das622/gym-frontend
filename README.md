@@ -1,117 +1,68 @@
-# NIPPARD — Science-Based Gym Tracking App
+LIFTS - Full-Stack Fitness Tracker
+A production-grade fitness and workout tracking application designed to help users log their training sessions, track progressive overload, and manage their workout history in real-time.
 
-A full-stack React + Vite gym tracking application built for Jeff Nippard's training platform.
+This application utilizes a decoupled architecture, featuring a modern React frontend communicating with a secure Java Spring Boot REST API, fully deployed on AWS cloud infrastructure.
 
-## Features
+🚀 Live Demo
+Frontend: https://davidlifts.fit
 
-- **Authentication** — Login, Register, JWT sessions, protected routes
-- **User Roles** — Admin, Coach, Athlete with role-gated UI and routes
-- **Admin Dashboard** — User management, platform stats, activity log, system config
-- **Coach Panel** — Athlete roster, adherence tracking, progress monitoring
-- **Workout Logging** — Log sets with weight, reps, RPE; auto-calculates volume
-- **Progress Charts** — Strength curves, estimated 1RM, personal records
-- **Programs** — Browse evidence-based training programs
+Backend API: https://api.davidlifts.fit
 
----
+🏗️ Architecture & Tech Stack
+Frontend (Client)
 
-## Demo Accounts
+React.js (Bootstrapped with Vite for optimized performance)
 
-| Role    | Email                   | Password     |
-|---------|-------------------------|--------------|
-| Admin   | jeff@nippard.com        | science123   |
-| Coach   | coach@nippard.com       | coach123     |
-| Athlete | athlete@nippard.com     | lift123      |
+Deployment: Vercel (Edge network deployment)
 
----
+Domain Management: Namecheap Custom DNS
 
-## Quick Start (Local Dev)
+Backend (Server)
 
-```bash
-# 1. Install dependencies
-npm install
+Java & Spring Boot: RESTful API architecture handling business logic and security
 
-# 2. Run dev server
-npm run dev
+Security: JWT-based authentication and secure token storage
 
-# Opens at http://localhost:5173
-```
+Deployment: Amazon Web Services (AWS EC2)
 
----
+Reverse Proxy: Nginx configured for optimized request routing and header management
 
-## Production Build
+SSL/Encryption: Let's Encrypt (Certbot) enforcing strict HTTPS/TLS
 
-```bash
-# Build for production
-npm run build
+Database
 
-# Output goes to /dist — deploy this folder
-```
+PostgreSQL: Relational database mapping complex user and workout entities
 
----
+Hosting: AWS RDS (Relational Database Service) for high availability and persistence
 
-## Nginx Deployment
+✨ Key Features
+Secure Authentication: Users can securely register, log in, and maintain persistent sessions via JWT.
 
-1. Build the app: `npm run build`
-2. Copy `dist/` to your server: `/var/www/nippard/dist`
-3. Copy `nginx/nippard.conf` to `/etc/nginx/sites-available/nippard`
-4. Enable it: `ln -s /etc/nginx/sites-available/nippard /etc/nginx/sites-enabled/`
-5. Get SSL cert: `certbot --nginx -d nippard.com`
-6. Reload nginx: `nginx -s reload`
+CRUD Functionality: Complete Create, Read, Update, and Delete operations for workout sessions and exercise sets.
 
----
+Real-Time Synchronization: Frontend state updates instantly upon database mutation for a seamless UX.
 
-## Tech Stack
+Cloud Infrastructure: Fully containerized and hosted environment ensuring 24/7 availability.
 
-| Layer     | Technology                        |
-|-----------|-----------------------------------|
-| Frontend  | React 18 + Vite                   |
-| Routing   | React Router v6                   |
-| Charts    | Recharts                          |
-| Auth      | JWT (localStorage), Role-based    |
-| Styling   | Pure CSS-in-JS (no framework)     |
-| Fonts     | Barlow Condensed + JetBrains Mono |
-| Server    | Nginx (reverse proxy + SPA)       |
-| Backend   | Plug into any REST API on :8080   |
+💻 Local Development Setup
+If you wish to run this project locally, follow these steps:
 
----
+Prerequisites
+Node.js and npm installed
 
-## Project Structure
+Java 17+ and Maven installed
 
-```
-src/
-  context/
-    AuthContext.jsx      # JWT auth, login/register/logout, roles
-    WorkoutContext.jsx   # Workout data, exercises, PRs, streaks
-  components/
-    AppLayout.jsx        # Sidebar navigation shell
-    auth/
-      ProtectedRoute.jsx # Route guards by auth + role
-  pages/
-    LoginPage.jsx
-    RegisterPage.jsx
-    DashboardPage.jsx    # Stats, charts, recent sessions
-    WorkoutsPage.jsx     # Workout history
-    NewWorkoutPage.jsx   # Log a session
-    ProgressPage.jsx     # Strength curves, PRs
-    ProgramsPage.jsx     # Browse programs
-    AdminPage.jsx        # Admin-only: users, platform, system
-    CoachPage.jsx        # Coach-only: athlete management
-nginx/
-  nippard.conf           # Production nginx config with SSL, rate limits
-```
+PostgreSQL installed and running locally
 
----
+Running the Frontend
+Clone the repository: git clone https://github.com/das622/gym-frontend.git
 
-## Connecting Your Backend
+Navigate to the directory: cd gym-frontend
 
-The app proxies `/api/*` to `localhost:8080` in dev (see `vite.config.js`).
+Install dependencies: npm install
 
-In production, nginx proxies `/api/` to your backend server. Update the upstream in `nginx/nippard.conf`:
+Create a .env file in the root directory and add your local API URL:
 
-```nginx
-upstream api_backend {
-    server YOUR_BACKEND_IP:8080;
-}
-```
-
-Replace the mock data in `AuthContext.jsx` and `WorkoutContext.jsx` with real `fetch()` calls to your API.
+Code snippet
+VITE_API_URL=http://localhost:8080/api/v1
+Start the development server: npm run dev
