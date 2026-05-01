@@ -30,10 +30,9 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // 1. Grab the exact string values right now
     const currentEmail = form.email;
     const currentName = form.name;
-    const currentPassword = form.password; // explicitly capture it
+    const currentPassword = form.password;
 
     if (currentPassword !== form.confirm) {
       setLocalError('Passwords do not match.')
@@ -46,9 +45,6 @@ export default function RegisterPage() {
     
     setLoading(true)
     try {
-      // 2. Pass the explicitly captured variables, NOT the form object
-      console.log("SENDING TO CONTEXT:", { name: currentName, email: currentEmail, password: currentPassword });
-      
       await register({ 
           name: currentName, 
           email: currentEmail, 
