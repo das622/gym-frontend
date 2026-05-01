@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-// import { useAuth } from '../../context/AuthContext'
 import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
@@ -12,6 +11,25 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
+  const handleDemoLogin = async (role) => {
+    // 1. Pick the right credentials
+    const demoEmail = role === 'admin' ? 'admin@davidlifts.fit' : 'athlete@davidlifts.fit';
+    const demoPassword = 'DemoLifts123!'; 
+
+    // 2. Auto-fill the visual form (optional, but looks cool to the user)
+    setForm({ email: demoEmail, password: demoPassword });
+
+    // 3. Trigger the login!
+    setLoading(true);
+    try {
+      await login({ email: demoEmail, password: demoPassword });
+      navigate('/dashboard');
+    } catch (err) {
+      // Handle error
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -115,12 +133,13 @@ export default function LoginPage() {
             <div style={styles.demoLabel}>DEMO ACCOUNTS</div>
             <div style={styles.demoGrid}>
               {[
-                { label: 'Admin', email: 'admin@lifts.com', pass: 'admin123', color: '#e8212b' },
-                { label: 'Athlete', email: 'athlete@lifts.com', pass: 'lift123', color: '#3b82f6' },
+                { label: 'Admin', email: 'admin@davidlifts.fit', pass: 'DemoLifts123!', color: '#e8212b' },
+                { label: 'Athlete', email: 'athlete@davidlifts.fit', pass: 'DemoLifts123!', color: '#3b82f6' },
               ].map(d => (
                 <button
                   key={d.label}
-                  onClick={() => fill(d.email, d.pass)}
+                  type="button" 
+                  onClick={() => handleDemoLogin(d.email, d.pass)}
                   style={{ ...styles.demoBtn, borderColor: d.color + '44', color: d.color }}
                 >
                   <span style={{ ...styles.demoDot, background: d.color }} />
