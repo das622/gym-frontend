@@ -29,17 +29,32 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (form.password !== form.confirm) {
+    
+    // 1. Grab the exact string values right now
+    const currentEmail = form.email;
+    const currentName = form.name;
+    const currentPassword = form.password; // explicitly capture it
+
+    if (currentPassword !== form.confirm) {
       setLocalError('Passwords do not match.')
       return
     }
-    if (pw.length < 6) {
+    if (currentPassword.length < 6) {
       setLocalError('Password must be at least 6 characters.')
       return
     }
+    
     setLoading(true)
     try {
-      await register({ name: form.name, email: form.email, password: form.password })
+      // 2. Pass the explicitly captured variables, NOT the form object
+      console.log("SENDING TO CONTEXT:", { name: currentName, email: currentEmail, password: currentPassword });
+      
+      await register({ 
+          name: currentName, 
+          email: currentEmail, 
+          password: currentPassword 
+      });
+      
       navigate('/dashboard')
     } catch {
       // error set in context
