@@ -91,7 +91,7 @@ export default function AppLayout() {
                 borderLeft: isMobile ? 'none' : `2px solid ${isActive ? 'var(--col-accent)' : 'transparent'}`,
                 borderTop: isMobile ? `2px solid ${isActive ? 'var(--col-accent)' : 'transparent'}` : 'none',
                 color: isActive ? 'var(--col-text)' : 'var(--col-text-2)',
-                justifyContent: isCollapsed && !isMobile ? 'center' : 'center',
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
                 flexDirection: isMobile ? 'column' : 'row', 
                 padding: isMobile ? '8px 0' : '10px 16px',
                 flex: isMobile ? 1 : 'none',
@@ -327,7 +327,9 @@ const styles = {
   },
   main: {
     flex: 1,
-    overflow: 'auto',
+    overflowY: 'auto', // Allow up/down scrolling
+    overflowX: 'hidden', // KILL side-to-side scrolling
     background: 'var(--col-bg)',
+    width: '100%', 
   },
 }
