@@ -96,11 +96,32 @@ export default function AppLayout() {
                 padding: isMobile ? '8px 0' : '10px 16px',
                 flex: isMobile ? 1 : 'none',
               })}
+              
             >
               <span style={styles.navIcon}>{item.icon}</span>
               {(!isCollapsed || isMobile) && <span style={{...styles.navLabel, fontSize: isMobile ? '10px' : '14px', marginTop: isMobile ? '4px' : '0'}}>{item.label}</span>}
             </NavLink>
           ))}
+          {/* Mobile Logout Button */}
+          {isMobile && (
+            <button
+              onClick={handleLogout}
+              style={{
+                ...styles.navItem,
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--col-text-3)',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                padding: '8px 0',
+                flex: 1,
+                cursor: 'pointer'
+              }}
+            >
+              <span style={styles.navIcon}>⏻</span>
+              <span style={{...styles.navLabel, fontSize: '10px', marginTop: '4px'}}>Sign Out</span>
+            </button>
+          )}
         </nav>
 
         {/* Hide bottom user card on mobile */}

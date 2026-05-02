@@ -1,7 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useWorkout } from '../context/WorkoutContext'
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
 export default function NewWorkoutPage() {
   // NOTE: You will need an 'updateWorkout' function in your context!
   const { exercises, logWorkout, updateWorkout, createExercise } = useWorkout()
@@ -150,6 +159,7 @@ export default function NewWorkoutPage() {
       setSaving(false);
     }
   }
+  const isMobile = useIsMobile();
   return (
     <div style={styles.root}>
       <div style={styles.header}>
@@ -203,12 +213,60 @@ export default function NewWorkoutPage() {
           {totalVolume > 0 && <div style={styles.volumeBadge}>Total: {(totalVolume / 1000).toFixed(1)}k lbs</div>}
         </div>
 
-        <div style={styles.setHeader}>
-          <div style={styles.sh1}>EXERCISE</div>
-          <div style={styles.sh2}>WEIGHT</div>
-          <div style={styles.sh3}>REPS</div>
-          <div style={styles.sh5} />
-        </div>
+        {/* Only show the column headers on Desktop */}
+        {!isMobile && (
+          <div style={styles.setHeader}>
+            <div style={styles.sh1}>EXERCISE</div>
+            <div style={styles.sh2}>WEIGHT</div>
+            <div style={styles.sh3}>REPS</div>
+            <div style={styles.sh5} />
+          </div>
+        )}
+
+        {/* The Workout Rows */}
+        {sets.map((s, i) => (
+          <div key={i} style={{
+            display: 'flex', 
+            flexDirection: isMobile ? 'column' : 'row', 
+            gap: '10px', 
+            padding: '12px 0', 
+            borderBottom: '1px solid var(--col-border)',
+            alignItems: isMobile ? 'stretch' : 'center'
+          }}>
+            
+            {/* EXERCISE BOX (Full width on mobile) */}
+            <div style={{ flex: isMobile ? 'none' : '2' }}>
+              {isMobile && <label style={{...styles.label, marginBottom: '4px', display: 'block'}}>EXERCISE</label>}
+              <input
+                list="exercises-list"
+                placeholder="Type or select..."
+                value={s.exercise}
+                onChange={e => updateSet(i, 'exercise', e.target.value)}
+                style={styles.select}
+              />
+              <datalist id="exercises-list">
+                {exercises.map(ex => <option key={ex.id} value={ex.name} />)}
+              </datalist>
+            </div>
+
+            {/* WEIGHT, REPS, AND DELETE BTN (Side-by-side) */}
+            <div style={{ display: 'flex', gap: '10px', flex: isMobile ? 'none' : '1' }}>
+              <div style={{ flex: 1 }}>
+                {isMobile && <label style={{...styles.label, marginBottom: '4px', display: 'block'}}>WEIGHT</label>}
+                <input type="number" placeholder="100" value={s.weight} onChange={e => updateSet(i, 'weight', e.target.value)} style={styles.numInput} />
+              </div>
+              <div style={{ flex: 1 }}>
+                {isMobile && <label style={{...styles.label, marginBottom: '4px', display: 'block'}}>REPS</label>}
+                <input type="number" placeholder="5" value={s.reps} onChange={e => updateSet(i, 'reps', e.target.value)} style={styles.numInput} />
+              </div>
+              <div style={{ width: '32px', display: 'flex', alignItems: isMobile ? 'flex-end' : 'center' }}>
+                {sets.length > 1 && <button onClick={() => removeSet(i)} style={{...styles.removeBtn, height: isMobile ? '35px' : '28px'}} >×</button>}
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <button onClick={addSet} style={styles.addSetBtn}>+ ADD SET</button>
 
         {sets.map((s, i) => (
           <div key={i} style={styles.setRow}>
