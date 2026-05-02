@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -26,6 +26,8 @@ const NAV_ITEMS = [
 export default function AppLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false)
 
   const isCollapsed = isMobile || collapsed;
