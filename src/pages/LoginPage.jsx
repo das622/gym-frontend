@@ -155,7 +155,7 @@ export default function LoginPage() {
       </div>
     </div>
   )
-}
+
 
 const styles = {
   root: {
