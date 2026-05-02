@@ -25,7 +25,7 @@ export default function ProgramsPage() {
     <div style={styles.root}>
       <div style={styles.header}>
         <h1 style={styles.title}>PROGRAMS</h1>
-        <p style={styles.subtitle}>Evidence-based training programs by Jeff Nippard</p>
+        <p style={styles.subtitle}>Evidence-based training programs</p>
       </div>
 
       <div style={styles.grid}>

@@ -11,7 +11,6 @@ const PLATFORM_STATS = [
 const ACTIVITY_LOG = [
   { time: '2 min ago', event: 'marcus@example.com logged a new workout', type: 'workout' },
   { time: '15 min ago', event: 'New user registered: alex.smith@gmail.com', type: 'user' },
-  { time: '1 hr ago', event: 'coach@nippard.com updated PPL program', type: 'program' },
   { time: '2 hrs ago', event: 'Revenue report generated for April 2025', type: 'report' },
   { time: '3 hrs ago', event: 'System: database backup completed', type: 'system' },
   { time: '5 hrs ago', event: '48 new workout sessions logged today', type: 'workout' },
