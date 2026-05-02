@@ -2,6 +2,18 @@ import { useState } from 'react'
 import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return isMobile;
+}
+
 const NAV_ITEMS = [
   { to: '/dashboard', icon: '⊞', label: 'Dashboard', roles: ['admin', 'coach', 'athlete'] },
   { to: '/workouts', icon: '◈', label: 'Workouts', roles: ['admin', 'coach', 'athlete'] },
@@ -15,6 +27,8 @@ export default function AppLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
+
+  const isCollapsed = isMobile || collapsed;
 
   const handleLogout = () => {
     logout()
@@ -38,72 +52,90 @@ export default function AppLayout() {
   return (
     <div style={styles.root}>
       {/* Sidebar */}
-      <aside style={{ ...styles.sidebar, width: collapsed ? 64 : 220 }}>
-        {/* Logo */}
-        <div style={styles.sidebarLogo}>
-          <div style={styles.logoMark}>L</div>
-          {!collapsed && (
-            <div>
-              <div style={styles.logoText}>LIFTS</div>
-              <div style={styles.logoSub}>Cloud Training</div>
-            </div>
-          )}
-        </div>
+      <aside style={{ 
+          ...styles.sidebar, 
+          width: isMobile ? '100%' : (isCollapsed ? 64 : 220) 
+        }}>
+        
+        {/* Hide Logo on Mobile */}
+        {!isMobile && (
+          <div style={styles.sidebarLogo}>
+            <div style={styles.logoMark}>L</div>
+            {!isCollapsed && (
+              <div>
+                <div style={styles.logoText}>LIFTS</div>
+                <div style={styles.logoSub}>Cloud Training</div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Nav */}
-        <nav style={styles.nav}>
+        <nav style={{
+             ...styles.nav, 
+             display: 'flex', 
+             flexDirection: isMobile ? 'row' : 'column',
+             justifyContent: isMobile ? 'space-around' : 'flex-start',
+             width: '100%'
+          }}>
           {visibleItems.map(item => (
             <NavLink
               key={item.to}
               to={item.to}
+              title={isCollapsed && !isMobile ? item.label : ''}
               style={({ isActive }) => ({
                 ...styles.navItem,
-                background: isActive ? 'var(--col-surface-3)' : 'transparent',
-                borderLeft: `2px solid ${isActive ? 'var(--col-accent)' : 'transparent'}`,
+                background: isActive && !isMobile ? 'var(--col-surface-3)' : 'transparent',
+                borderLeft: isMobile ? 'none' : `2px solid ${isActive ? 'var(--col-accent)' : 'transparent'}`,
+                borderTop: isMobile ? `2px solid ${isActive ? 'var(--col-accent)' : 'transparent'}` : 'none',
                 color: isActive ? 'var(--col-text)' : 'var(--col-text-2)',
-                justifyContent: collapsed ? 'center' : 'flex-start',
+                justifyContent: isCollapsed && !isMobile ? 'center' : 'center',
+                flexDirection: isMobile ? 'column' : 'row', 
+                padding: isMobile ? '8px 0' : '10px 16px',
+                flex: isMobile ? 1 : 'none',
               })}
-              title={collapsed ? item.label : ''}
             >
               <span style={styles.navIcon}>{item.icon}</span>
-              {!collapsed && <span style={styles.navLabel}>{item.label}</span>}
+              {(!isCollapsed || isMobile) && <span style={{...styles.navLabel, fontSize: isMobile ? '10px' : '14px', marginTop: isMobile ? '4px' : '0'}}>{item.label}</span>}
             </NavLink>
           ))}
         </nav>
 
-        {/* Bottom: user & collapse */}
-        <div style={styles.sidebarBottom}>
-          <button
-            onClick={() => setCollapsed(c => !c)}
-            style={{ ...styles.collapseBtn, justifyContent: collapsed ? 'center' : 'flex-start' }}
-          >
-            <span style={styles.navIcon}>{collapsed ? '→' : '←'}</span>
-            {!collapsed && <span style={styles.navLabel}>Collapse</span>}
-          </button>
+        {/* Hide bottom user card on mobile */}
+        {!isMobile && (
+          <div style={styles.sidebarBottom}>
+            <button
+              onClick={() => setCollapsed(c => !c)}
+              style={{ ...styles.collapseBtn, justifyContent: isCollapsed ? 'center' : 'flex-start' }}
+            >
+              <span style={styles.navIcon}>{isCollapsed ? '→' : '←'}</span>
+              {!isCollapsed && <span style={styles.navLabel}>Collapse</span>}
+            </button>
 
-          <div style={{ ...styles.userCard, flexDirection: collapsed ? 'column' : 'row' }}>
-            <div style={{ ...styles.avatar, borderColor: roleColor }}>
-              {user?.avatar}
-            </div>
-            {!collapsed && (
-              <div style={styles.userInfo}>
-                <div style={styles.userName}>{user?.name}</div>
-                <div style={{ ...styles.roleBadge, color: roleColor }}>
-                  {roleBadge}
-                </div>
+            <div style={{ ...styles.userCard, flexDirection: isCollapsed ? 'column' : 'row' }}>
+              <div style={{ ...styles.avatar, borderColor: roleColor }}>
+                {user?.avatar}
               </div>
-            )}
-          </div>
+              {!isCollapsed && (
+                <div style={styles.userInfo}>
+                  <div style={styles.userName}>{user?.name}</div>
+                  <div style={{ ...styles.roleBadge, color: roleColor }}>
+                    {roleBadge}
+                  </div>
+                </div>
+              )}
+            </div>
 
-          <button
-            onClick={handleLogout}
-            style={{ ...styles.logoutBtn, justifyContent: collapsed ? 'center' : 'flex-start' }}
-            title="Sign out"
-          >
-            <span style={styles.navIcon}>⏻</span>
-            {!collapsed && <span style={styles.navLabel}>Sign Out</span>}
-          </button>
-        </div>
+            <button
+              onClick={handleLogout}
+              style={{ ...styles.logoutBtn, justifyContent: isCollapsed ? 'center' : 'flex-start' }}
+              title="Sign out"
+            >
+              <span style={styles.navIcon}>⏻</span>
+              {!isCollapsed && <span style={styles.navLabel}>Sign Out</span>}
+            </button>
+          </div>
+        )}
       </aside>
 
       {/* Main content */}
@@ -117,6 +149,8 @@ export default function AppLayout() {
 const styles = {
   root: {
     display: 'flex',
+    // Check if it's mobile to change flex direction
+    flexDirection: window.innerWidth <= 768 ? 'column-reverse' : 'row', 
     height: '100vh',
     overflow: 'hidden',
     background: 'var(--col-bg)',
@@ -124,11 +158,17 @@ const styles = {
   sidebar: {
     flexShrink: 0,
     background: 'var(--col-surface)',
-    borderRight: '1px solid var(--col-border)',
+    borderRight: window.innerWidth <= 768 ? 'none' : '1px solid var(--col-border)',
+    borderTop: window.innerWidth <= 768 ? '1px solid var(--col-border)' : 'none',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: window.innerWidth <= 768 ? 'row' : 'column',
+    justifyContent: window.innerWidth <= 768 ? 'space-around' : 'flex-start',
     transition: 'width 200ms ease',
     overflow: 'hidden',
+    // Mobile bottom bar styling vs Desktop sidebar
+    width: window.innerWidth <= 768 ? '100%' : 'auto', 
+    height: window.innerWidth <= 768 ? '64px' : 'auto',
+    zIndex: 10,
   },
   sidebarLogo: {
     padding: '20px 16px',
