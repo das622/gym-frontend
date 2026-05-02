@@ -11,32 +11,34 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
+
   const handleDemoLogin = async (demoEmail, demoPassword) => {
     // 1. Auto-fill the visual form
     setForm({ email: demoEmail, password: demoPassword });
 
     // 2. Trigger the login!
     setLoading(true);
+    setError(null);
     try {
-      // Pass them as two separate strings, just like handleSubmit!
+      // Pass them as two separate strings!
       await login(demoEmail, demoPassword);
       navigate('/dashboard');
     } catch (err) {
-      setError("Failed to login to demo account."); // Actually show the error!
+      setError("Invalid email or password.");
     } finally {
       setLoading(false);
     }
-  }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setError(null)
     try {
       await login(form.email, form.password)
       navigate(from, { replace: true })
     } catch {
-      // error is set in context
+      setError("Invalid email or password.");
     } finally {
       setLoading(false)
     }
@@ -155,7 +157,7 @@ export default function LoginPage() {
       </div>
     </div>
   )
-
+}
 
 const styles = {
   root: {
