@@ -11,24 +11,22 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
-  const handleDemoLogin = async (role) => {
-    // 1. Pick the right credentials
-    const demoEmail = role === 'admin' ? 'admin@davidlifts.fit' : 'athlete@davidlifts.fit';
-    const demoPassword = 'DemoLifts123!'; 
-
-    // 2. Auto-fill the visual form (optional, but looks cool to the user)
+  const handleDemoLogin = async (demoEmail, demoPassword) => {
+    // 1. Auto-fill the visual form
     setForm({ email: demoEmail, password: demoPassword });
 
-    // 3. Trigger the login!
+    // 2. Trigger the login!
     setLoading(true);
     try {
-      await login({ email: demoEmail, password: demoPassword });
+      // Pass them as two separate strings, just like handleSubmit!
+      await login(demoEmail, demoPassword);
       navigate('/dashboard');
     } catch (err) {
-      // Handle error
+      setError("Failed to login to demo account."); // Actually show the error!
     } finally {
       setLoading(false);
     }
+  }
   }
 
   const handleSubmit = async (e) => {
