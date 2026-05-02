@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { useAuth } from '../context/AuthContext'
@@ -89,8 +89,17 @@ function CustomTooltip({ active, payload, label }) {
     </div>
   )
 }
-
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
 export default function DashboardPage() {
+  const isMobile = useIsMobile(); // Call it here!
   const { user } = useAuth()
   const { workouts, getPersonalBests, getVolumeByWeek, getStreak, exercises } = useWorkout()
 
@@ -145,7 +154,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Volume chart + PBs */}
-      <div style={styles.twoCol}>
+      <div style={{
+          ...styles.twoCol,
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 380px' // Stack on mobile, side-by-side on desktop
+      }}>
         {/* Volume chart */}
         <div style={styles.chartCard}>
           <div style={styles.cardTitle}>
