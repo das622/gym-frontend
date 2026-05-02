@@ -268,33 +268,6 @@ export default function NewWorkoutPage() {
 
         <button onClick={addSet} style={styles.addSetBtn}>+ ADD SET</button>
 
-        {sets.map((s, i) => (
-          <div key={i} style={styles.setRow}>
-            <div style={styles.sh1}>
-              <input
-                list="exercises-list"
-                placeholder="Type or select..."
-                value={s.exercise}
-                onChange={e => updateSet(i, 'exercise', e.target.value)}
-                style={styles.select}
-              />
-              <datalist id="exercises-list">
-                {exercises.map(ex => <option key={ex.id} value={ex.name} />)}
-              </datalist>
-            </div>
-            <div style={styles.sh2}>
-              <input type="number" placeholder="100" value={s.weight} onChange={e => updateSet(i, 'weight', e.target.value)} style={styles.numInput} />
-            </div>
-            <div style={styles.sh3}>
-              <input type="number" placeholder="5" value={s.reps} onChange={e => updateSet(i, 'reps', e.target.value)} style={styles.numInput} />
-            </div>
-            <div style={styles.sh5}>
-              {sets.length > 1 && <button onClick={() => removeSet(i)} style={styles.removeBtn}>×</button>}
-            </div>
-          </div>
-        ))}
-
-        <button onClick={addSet} style={styles.addSetBtn}>+ ADD SET</button>
       </div>
 
       <div style={styles.actions}>
